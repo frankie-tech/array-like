@@ -1,4 +1,4 @@
-# {Plugin Name} - Simple Package Template
+# ArrayLike - an Array subclass
 
 ## About
 
