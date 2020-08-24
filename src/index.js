@@ -1,4 +1,4 @@
-class ArrayLike extends Array {
+export default class ArrayLike extends Array {
 	constructor(options, ...args) {
 		super();
 		this.shift();
@@ -104,4 +104,10 @@ class ArrayLike extends Array {
 	get last() {
 		return this[this.length - 1];
 	}
+
+	static get [Symbol.species]() {
+		return Array;
+	}
 }
+
+var al = new ArrayLike();
