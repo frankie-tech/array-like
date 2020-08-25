@@ -60,6 +60,15 @@ export default class ArrayLike extends Array {
 		return returnArr ? out : new ArrayLike(out);
 	}
 
+	forEach(fn) {
+		var i = 0,
+			len = this.length;
+		for (; i < len; ) {
+			fn(this[i], i, this);
+			i++;
+		}
+	}
+
 	isIterable(iterable) {
 		return iterable && iterable[Symbol.iterator] instanceof Function;
 	}
