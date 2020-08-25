@@ -48,4 +48,17 @@ test('forEach', () => {
 	assert.not.equal(arrayLikeUseThis, new ArrayLike(5, 9, 11, 21));
 });
 
+test('asyncEach', async () => {
+	const arrayLike = new ArrayLike(1, 2, 3, 4);
+
+	const wait = () => new Promise(res => setTimeout(res, 500));
+
+	await arrayLike.asyncEach(async function (item, i, arr) {
+		await wait();
+		arr[i] = item * 2;
+	});
+
+	assert.equal(arrayLike, new ArrayLike(2, 4, 6, 8));
+});
+
 test.run();
