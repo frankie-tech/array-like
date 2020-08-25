@@ -40,21 +40,24 @@ export default class ArrayLike extends Array {
 	}
 
 	// extended from @arr/map by lukeed
-	map(fn) {
+	map(fn, options) {
 		var len = this.length;
 		if (len === 0) {
 			return [];
 		}
 
 		var i = 0,
-			out = new Array(len);
+			out = new Array(len),
+			returnArr =
+				ArrayLike.hasOption(options, 'returnArr') &&
+				options.returnArr === true;
 
 		for (; i < len; ) {
 			out[i] = fn(this[i], i, this);
 			i++;
 		}
 
-		return out;
+		return returnArr ? out : new ArrayLike(out);
 	}
 
 	isIterable(iterable) {
@@ -80,11 +83,16 @@ export default class ArrayLike extends Array {
 		return this.push(iterArr);
 	}
 
-	static unique() {
+	static unique(options) {
 		var arr = Array.prototype.slice.call(arguments),
 			l = arr.length,
 			i = 0,
-			out = [];
+			out = [],
+			returnArr =
+				ArrayLike.hasOption(options, 'returnArr') &&
+				options.returnArr === true;
+		if (returnArr) arr = Array.prototype.slice.call(arguments, 1);
+
 		for (; l > i; ) {
 			if (arr.indexOf(arr[i]) !== i) {
 				i++;
@@ -93,7 +101,7 @@ export default class ArrayLike extends Array {
 			out.push(arr[i]);
 			i++;
 		}
-		return out;
+		return returnArr ? out : new ArrayLike(out);
 	}
 
 	static type(obj) {
@@ -108,6 +116,8 @@ export default class ArrayLike extends Array {
 	static get [Symbol.species]() {
 		return Array;
 	}
-}
 
-var al = new ArrayLike();
+	static hasOption(obj, option) {
+		return this.type(obj) === 'object' && option in obj;
+	}
+}
