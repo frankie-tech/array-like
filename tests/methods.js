@@ -30,4 +30,22 @@ test('reduce', () => {
 	assert.equal(arrayLikeReduced, testReduced);
 });
 
+test('forEach', () => {
+	const arrayLike = new ArrayLike(1, 2, 3, 4);
+
+	function forEachCallback(item, i, arr, that) {
+		arr[i] = item * 2;
+		if (that && that.length === 0) arr[i] += 1;
+	}
+	arrayLike.forEach(forEachCallback);
+	assert.equal(arrayLike, new ArrayLike(2, 4, 6, 8));
+
+	// Should not accept a thisArg like in the spec
+	// a necessary casualty, can be reassessed later
+	const arrayLikeUseThis = new ArrayLike(2, 4, 5, 10);
+	arrayLikeUseThis.forEach(forEachCallback, new ArrayLike());
+
+	assert.not.equal(arrayLikeUseThis, new ArrayLike(5, 9, 11, 21));
+});
+
 test.run();
