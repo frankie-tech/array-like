@@ -69,6 +69,15 @@ export default class ArrayLike extends Array {
 		}
 	}
 
+	async asyncEach(fn) {
+		var i = 0,
+			len = this.length;
+		for (; i < len; ) {
+			await fn(this[i], i, this);
+			i++;
+		}
+	}
+
 	isIterable(iterable) {
 		return iterable && iterable[Symbol.iterator] instanceof Function;
 	}
