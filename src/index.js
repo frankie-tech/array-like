@@ -89,7 +89,7 @@ export default class ArrayLike extends Array {
 			i = 0,
 			out = [],
 			returnArr =
-				ArrayLike.hasOption(options, 'returnArr') &&
+				this.hasOption(options, 'returnArr') &&
 				options.returnArr === true;
 		if (returnArr) arr = Array.prototype.slice.call(arguments, 1);
 
