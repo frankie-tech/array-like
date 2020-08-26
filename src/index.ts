@@ -1,4 +1,6 @@
-export default class Arrayish extends Array {
+import { ReduceCallback, ReduceValue } from './types';
+
+export default class Arrayish<T> extends Array {
 	length: number;
 	constructor(options: { unique: boolean }, ...items: any[]) {
 		super();
@@ -10,15 +12,14 @@ export default class Arrayish extends Array {
 			// if passed iterable arraylike, needs to iterate through
 			// otherwise, just make array
 			var makeArr =
-				arguments.length === 1 && arguments[0].length >= 1
-					? arguments[0]
-					: arguments;
+				items.length === 1 && items[0].length >= 1 ? items[0] : items;
+
 			this.toArray(makeArr);
 		}
 	}
 
 	// extended from @arr/reduce by lukeed
-	reduce(fn: ReduceCallback, val: ReduceValue) {
+	reducer(fn: ReduceCallback, val: ReduceValue) {
 		var len = this.length;
 		if (len === 0) {
 			return [];
