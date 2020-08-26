@@ -4,7 +4,6 @@ import Arrayish from '../dist/array-ish.modern';
 
 test('species', () => {
 	const arrayLike = new Arrayish({ unique: false }, 1, 2, 3, 4);
-
 	assert.type(arrayLike, 'object');
 	assert.instance(arrayLike, Array);
 });
