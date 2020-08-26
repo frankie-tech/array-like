@@ -7,6 +7,8 @@ type ReduceCallback = (
 	array: any[] | ArrayLike<any>
 ) => any;
 
+export { ReduceValue, ReduceCallback };
+
 /*
 export class Arrayish<T> {
 	length: number;
