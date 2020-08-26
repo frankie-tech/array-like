@@ -1,9 +1,10 @@
-export default class ArrayLike extends Array {
-	constructor(options, ...args) {
+export default class Arrayish extends Array {
+	length: number;
+	constructor(options: { unique: boolean }, ...items: any[]) {
 		super();
 		this.shift();
-		if (ArrayLike.type(options) === 'object' && options.unique === true) {
-			this.toArray(ArrayLike.unique(...arguments));
+		if (options.unique) {
+			this.toArray(Arrayish.unique({ returnArr: false }, items));
 			this.shift();
 		} else {
 			// if passed iterable arraylike, needs to iterate through
@@ -17,7 +18,7 @@ export default class ArrayLike extends Array {
 	}
 
 	// extended from @arr/reduce by lukeed
-	reduce(fn, val) {
+	reduce(fn: ReduceCallback, val: ReduceValue) {
 		var len = this.length;
 		if (len === 0) {
 			return [];
@@ -40,7 +41,7 @@ export default class ArrayLike extends Array {
 	}
 
 	// extended from @arr/map by lukeed
-	map(fn, options) {
+	map(fn: Function, options: { returnArr: boolean }): any[] | Arrayish<any> {
 		var len = this.length;
 		if (len === 0) {
 			return [];
@@ -49,7 +50,7 @@ export default class ArrayLike extends Array {
 		var i = 0,
 			out = new Array(len),
 			returnArr =
-				ArrayLike.hasOption(options, 'returnArr') &&
+				Arrayish.hasOption(options, 'returnArr') &&
 				options.returnArr === true;
 
 		for (; i < len; ) {
@@ -57,10 +58,10 @@ export default class ArrayLike extends Array {
 			i++;
 		}
 
-		return returnArr ? out : new ArrayLike(out);
+		return returnArr ? out : new Arrayish({ unique: false }, out);
 	}
 
-	forEach(fn) {
+	forEach(fn: Function) {
 		var i = 0,
 			len = this.length;
 		for (; i < len; ) {
@@ -69,7 +70,7 @@ export default class ArrayLike extends Array {
 		}
 	}
 
-	async asyncEach(fn) {
+	async asyncEach(fn: Function) {
 		var i = 0,
 			len = this.length;
 		for (; i < len; ) {
@@ -78,11 +79,11 @@ export default class ArrayLike extends Array {
 		}
 	}
 
-	isIterable(iterable) {
+	isIterable(iterable: any) {
 		return iterable && iterable[Symbol.iterator] instanceof Function;
 	}
 
-	toArray(iterable) {
+	toArray(iterable: any) {
 		var isIterable = this.isIterable(iterable);
 
 		if (isIterable && iterable.length >= 1) {
@@ -101,7 +102,7 @@ export default class ArrayLike extends Array {
 		return this.push(iterArr);
 	}
 
-	static unique(options) {
+	static unique(options: { returnArr: boolean }, ...items: any[]) {
 		var arr = Array.prototype.slice.call(arguments),
 			l = arr.length,
 			i = 0,
@@ -109,7 +110,7 @@ export default class ArrayLike extends Array {
 			returnArr =
 				this.hasOption(options, 'returnArr') &&
 				options.returnArr === true;
-		if (returnArr) arr = Array.prototype.slice.call(arguments, 1);
+		if (returnArr) arr = Array.prototype.slice.call(items);
 
 		for (; l > i; ) {
 			if (arr.indexOf(arr[i]) !== i) {
@@ -119,7 +120,7 @@ export default class ArrayLike extends Array {
 			out.push(arr[i]);
 			i++;
 		}
-		return returnArr ? out : new ArrayLike(out);
+		return returnArr ? out : new Arrayish({ unique: false }, out);
 	}
 
 	static type(obj) {
