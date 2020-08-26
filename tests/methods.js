@@ -1,9 +1,9 @@
 import { test } from 'uvu';
 import assert from 'uvu/assert';
-import ArrayLike from '../src/index';
+import Arrayish from '../dist/array-ish.modern';
 
 test('map', () => {
-	const arrayLike = new ArrayLike(1, 2, 3, 4);
+	const arrayLike = new Arrayish({ unique: false }, 1, 2, 3, 4);
 
 	// should return a new ArrayLike instance altered by the map callback
 	const mappedArrayLike = arrayLike.map(mapCB);
@@ -14,7 +14,7 @@ test('map', () => {
 	// should return an array
 	const mappedArray = arrayLike.map(mapCB, options);
 
-	assert.equal(mappedArrayLike, new ArrayLike(2, 4, 6, 8));
+	assert.equal(mappedArrayLike, new Arrayish({ unique: false }, 2, 4, 6, 8));
 	assert.equal(mappedArray, [2, 4, 6, 8]);
 
 	function mapCB(i) {
@@ -24,32 +24,36 @@ test('map', () => {
 
 test('reduce', () => {
 	// prettier-ignore
-	const arrayLikeReduced = new ArrayLike(1, 2, 3, 4).reduce((acc, curr) => acc + curr);
+	const arrayLikeReduced = new Arrayish({ unique: false }, 1, 2, 3, 4).reducer((acc, curr) => acc + curr);
 	const testReduced = [1, 2, 3, 4].reduce((acc, curr) => acc + curr);
 
 	assert.equal(arrayLikeReduced, testReduced);
 });
 
 test('forEach', () => {
-	const arrayLike = new ArrayLike(1, 2, 3, 4);
+	const arrayLike = new Arrayish({ unique: false }, 1, 2, 3, 4);
 
-	function forEachCallback(item, i, arr, that) {
+	function forEachCallback(item, i, arr) {
 		arr[i] = item * 2;
-		if (that && that.length === 0) arr[i] += 1;
 	}
+
 	arrayLike.forEach(forEachCallback);
-	assert.equal(arrayLike, new ArrayLike(2, 4, 6, 8));
+
+	assert.equal(arrayLike, new Arrayish({ unique: false }, 2, 4, 6, 8));
 
 	// Should not accept a thisArg like in the spec
 	// a necessary casualty, can be reassessed later
-	const arrayLikeUseThis = new ArrayLike(2, 4, 5, 10);
-	arrayLikeUseThis.forEach(forEachCallback, new ArrayLike());
+	const arrayLikeUseThis = new Arrayish({ unique: false }, 2, 4, 5, 10);
+	arrayLikeUseThis.forEach(forEachCallback, new Arrayish({ unique: false }));
 
-	assert.not.equal(arrayLikeUseThis, new ArrayLike(5, 9, 11, 21));
+	assert.not.equal(
+		arrayLikeUseThis,
+		new Arrayish({ unique: false }, 5, 9, 11, 21)
+	);
 });
 
 test('asyncEach', async () => {
-	const arrayLike = new ArrayLike(1, 2, 3, 4);
+	const arrayLike = new Arrayish({ unique: false }, 1, 2, 3, 4);
 
 	const wait = () => new Promise(res => setTimeout(res, 500));
 
@@ -58,7 +62,7 @@ test('asyncEach', async () => {
 		arr[i] = item * 2;
 	});
 
-	assert.equal(arrayLike, new ArrayLike(2, 4, 6, 8));
+	assert.equal(arrayLike, new Arrayish({ unique: false }, 2, 4, 6, 8));
 });
 
 test.run();
