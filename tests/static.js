@@ -1,19 +1,19 @@
 import { test } from 'uvu';
 import assert from 'uvu/assert';
-import ArrayLike from '../src/index';
+import Arrayish from '../dist/array-ish.modern';
 
 test('type', () => {
-	const array = ArrayLike.type([]);
-	const object = ArrayLike.type({});
-	const symbol = ArrayLike.type(Symbol());
-	const string = ArrayLike.type('');
-	const undef = ArrayLike.type(undefined);
-	const nulled = ArrayLike.type(null);
-	const bool = ArrayLike.type(false);
-	const number = ArrayLike.type(1);
-	const nan = ArrayLike.type(NaN);
-	const func = ArrayLike.type(() => {});
-	const err = ArrayLike.type(Error());
+	const array = Arrayish.type([]);
+	const object = Arrayish.type({});
+	const symbol = Arrayish.type(Symbol());
+	const string = Arrayish.type('');
+	const undef = Arrayish.type(undefined);
+	const nulled = Arrayish.type(null);
+	const bool = Arrayish.type(false);
+	const number = Arrayish.type(1);
+	const nan = Arrayish.type(NaN);
+	const func = Arrayish.type(() => {});
+	const err = Arrayish.type(Error());
 
 	assert.equal(array, 'array');
 	assert.equal(object, 'object');
@@ -29,21 +29,33 @@ test('type', () => {
 });
 
 test('unique', () => {
-	const arrayLike = new ArrayLike({ unique: true }, 1, 1, 1, 1);
-	const test = new ArrayLike(1);
+	const arrayLike = new Arrayish({ unique: true }, 1, 1, 1, 1);
+	const test = new Arrayish({ unique: false }, 1);
 
-	assert.equal(arrayLike, test);
+	assert.equal(
+		arrayLike,
+		test,
+		'Should return a unique Arrayish from constructor'
+	);
 
 	// should return array
-	const unique = ArrayLike.unique({ returnArr: true }, 1, 1, 1, 1, 1);
+	const unique = Arrayish.unique({ returnArr: true }, 1, 1, 1, 1, 1);
 	const uniqueTest = [1];
 
-	assert.equal(unique, uniqueTest);
+	assert.equal(
+		unique,
+		uniqueTest,
+		'Should return a unique array from static method'
+	);
 
-	const uniqueArrayLike = ArrayLike.unique(1, 1, 1, 1);
-	const uniqueArrayLikeTest = new ArrayLike(1);
+	const uniqueArrayLike = Arrayish.unique({ returnArr: false }, 1, 1, 1, 1);
+	const uniqueArrayLikeTest = new Arrayish({ unique: false }, 1);
 
-	assert.equal(uniqueArrayLike, uniqueArrayLikeTest);
+	assert.equal(
+		uniqueArrayLike,
+		uniqueArrayLikeTest,
+		'Should return a unique Arrayish from static method'
+	);
 });
 
 test.run();
