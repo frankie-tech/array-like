@@ -1,9 +1,9 @@
 {
-	"name": "array-like",
+	"name": "arrayish",
 	"version": "1.0.0",
-	"description": "Template repo for building simple packages",
-	"main": "dist/array-like.js",
-	"module": "dist/array-like.modern.js",
+	"description": "an array-ish package that extends the array prototype",
+	"main": "dist/array-ish.js",
+	"module": "dist/array-ish.modern.js",
 	"source": "src/index.ts",
 	"scripts": {
 		"test": "uvu -r esm tests",
@@ -15,7 +15,7 @@
 	},
 	"keywords": [
 		"subclass",
-		"array-like",
+		"array-ish",
 		"typescript"
 	],
 	"author": {
