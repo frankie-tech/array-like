@@ -5,16 +5,17 @@ export default class Arrayish<T> extends Array {
 	constructor(options: { unique: boolean }, ...items: any[]) {
 		super();
 		this.shift();
+		this.options = Arrayish.makeDescriptor(options);
 		if (options.unique) {
-			this.toArray(Arrayish.unique({ returnArr: false }, items));
-			this.shift();
+			let unique = Arrayish.unique({ returnArr: true }, ...items);
+			this.push(...unique);
 		} else {
 			// if passed iterable arraylike, needs to iterate through
 			// otherwise, just make array
 			var makeArr =
 				items.length === 1 && items[0].length >= 1 ? items[0] : items;
 
-			this.toArray(makeArr);
+			this.push(...makeArr);
 		}
 	}
 
@@ -80,38 +81,29 @@ export default class Arrayish<T> extends Array {
 		}
 	}
 
-	isIterable(iterable: any) {
+	isIterable(iterable: any): boolean {
 		return iterable && iterable[Symbol.iterator] instanceof Function;
 	}
 
-	toArray(iterable: any) {
-		var isIterable = this.isIterable(iterable);
-
-		if (isIterable && iterable.length >= 1) {
-			var iterArr = Array.prototype.slice.call(iterable),
-				l = iterArr.length,
-				i = 0;
-			for (; l > i; ) {
-				if (this.isIterable(iterArr[i])) {
-					this.push(...iterArr[i++]);
-					continue;
-				}
-				this.push(iterArr[i++]);
-			}
-			return this;
+	toArray(iterable: any): Arrayish<any> {
+		var iterArr = Array.prototype.slice.call(iterable),
+			l = iterArr.length,
+			i = 0;
+		for (; l > i; i++) {
+			let item = iterArr[i];
+			this.isIterable(item) ? this.push(...item) : this.push(item);
 		}
-		return this.push(iterArr);
+		return this;
 	}
 
-	static unique(options: { returnArr: boolean }, ...items: any[]) {
-		var arr = Array.prototype.slice.call(arguments),
+	static unique(
+		options: { returnArr: boolean },
+		...items: any[]
+	): any[] | Arrayish<any> {
+		var arr = Array.prototype.slice.call(items),
 			l = arr.length,
 			i = 0,
-			out = [],
-			returnArr =
-				this.hasOption(options, 'returnArr') &&
-				options.returnArr === true;
-		if (returnArr) arr = Array.prototype.slice.call(items);
+			out = [];
 
 		for (; l > i; ) {
 			if (arr.indexOf(arr[i]) !== i) {
@@ -121,12 +113,32 @@ export default class Arrayish<T> extends Array {
 			out.push(arr[i]);
 			i++;
 		}
-		return returnArr ? out : new Arrayish({ unique: false }, out);
+		return options.returnArr
+			? out
+			: new Arrayish({ unique: false }, ...out);
 	}
 
-	static type(obj) {
+	static type(obj: any): string {
 		// returns type: array, object, symbol, string, etc...
 		return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
+	}
+
+	set options(option) {
+		const [k, v] = Object.entries(option);
+		const config = Object.assign(
+			{},
+			Object.getOwnPropertyDescriptor(this, 'config'),
+			{
+				[`${k}`]: v,
+			}
+		);
+		Object.defineProperties(this, {
+			config,
+		});
+	}
+
+	get options() {
+		return Object.getOwnPropertyDescriptor(this, 'config');
 	}
 
 	get last() {
@@ -135,6 +147,17 @@ export default class Arrayish<T> extends Array {
 
 	static get [Symbol.species]() {
 		return Array;
+	}
+
+	static makeDescriptor(options: { unique: boolean }) {
+		return Object.assign(
+			{
+				configurable: true,
+				enumerable: true,
+				writable: true,
+			},
+			options
+		);
 	}
 
 	static hasOption(obj, option) {
