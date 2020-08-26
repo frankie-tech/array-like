@@ -1,51 +1,47 @@
-# ArrayLike - an Array subclass
+# Arrayish - an Array subclass
 
 ## About
 
-A simple package template to build small JavaScript packages with TypeScript. Ideal for the developer who wants to make a package with 0 dependencies.
+I wanted to create an Array Extension for fun and also to add some utilities that I really wanted. What I'm trying to say is, you probably don't want to use this in production.
 
 Uses:
 
--   Microbundle (pre-configured bundler)
--   Husky (formatting on commit)
+-   [Microbundle](https://github.com/developit/microbundle) (pre-configured bundler)
+-   [Husky](https://github.com/typicode/husky) (formatting on commit)
 -   Prettier (formatting)
+-   map & reduce are borrowed/extended from [@arr by lukeed](https://github.com/lukeed/arr)
 
 ## Documentation
 
-Set up for TypeScript by default, but to change it to JavaScript, change the `package.json` file from:
+You can't call it using the standard `[]`, you have to use an actual constructor. Part of the "features" is that you can make the Arrayish instance unique on construction, so each construction must pass an options object. _This might be revised later._
 
-```json
-{
-	"name": "simple-package",
-	"version": "1.0.0",
-	"source": "src/index.ts"
-}
+```js
+const arrayish = new Arrayish({ unique: false }, 1, 1, 1, 1, 1);
+console.log(arrayish); // [ 1, 1, 1, 1, 1 ]
 ```
 
-to:
+There are also a few static methods that are exposed, such as `unique()`
 
-```json
-{
-	"name": "simple-package",
-	"version": "1.0.0",
-	"source": "src/index.js"
-}
+```js
+// can return either an Arrayish or an array
+const uniqueArrayish = Arrayish.unique({ returnArr: false }, ...arrayish);
+console.log(uniqueArrayish); // [ 1 ]
+console.log(uniqueArrayish instanceof Arrayish); // true
 ```
 
-Microbundle uses the source key to determine if it should use TypeScript or just good ol' fashioned JavaScript. If the source file has a `.ts` extension, then TypeScript will be used.
+## Scripts
 
-### Options
+I use yarn for this project. Here's the scrripts you would use:
 
-Check out the different Dev Dependencies to see what options there are, there are no options built in to the template itself.
+```sh
+> yarn
+# to install and add everything
 
-### Questions
+> yarn start
+# cleans the dist folder, runs microbundle with the watch command
 
-¯\\\_(ツ)\_/¯
+> yarn build
+# cleans the dist folder, runs microbundle to build a modern and umd version, then runs tests on the modern version
+```
 
-### Templates
-
-¯\\\_(ツ)\_/¯
-
-### Issue Template
-
-¯\\\_(ツ)\_/¯
+I recommend inspecting the `package.json` to see how each of the scripts are built.
