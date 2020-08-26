@@ -31,7 +31,6 @@ test('type', () => {
 test('unique', () => {
 	const arrayLike = new Arrayish({ unique: true }, 1, 1, 1, 1);
 	const test = new Arrayish({ unique: false }, 1);
-
 	assert.equal(
 		arrayLike,
 		test,
@@ -40,6 +39,7 @@ test('unique', () => {
 
 	// should return array
 	const unique = Arrayish.unique({ returnArr: true }, 1, 1, 1, 1, 1);
+
 	const uniqueTest = [1];
 
 	assert.equal(
