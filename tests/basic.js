@@ -1,21 +1,21 @@
 import { test } from 'uvu';
 import assert from 'uvu/assert';
-import ArrayLike from '../src/index';
+import Arrayish from '../src/index';
 
 test('species', () => {
-	const arrayLike = new ArrayLike(1, 2, 3, 4);
+	const arrayLike = new Arrayish(1, 2, 3, 4);
 	assert.type(arrayLike, 'object');
 	assert.instance(arrayLike, Array);
 });
 
 test('value', () => {
-	const arrayLike = new ArrayLike(1, 2, 3, 4);
+	const arrayLike = new Arrayish(1, 2, 3, 4);
 	assert.is(arrayLike, arrayLike);
 	assert.is.not(arrayLike, [1, 2, 3, 4]);
 });
 
 test('length', () => {
-	const arrayLike = new ArrayLike(1, 2, 3, 4);
+	const arrayLike = new Arrayish(1, 2, 3, 4);
 	assert.equal(arrayLike.length, [1, 2, 3, 4].length);
 	assert.equal(arrayLike.last, 4);
 });

@@ -1,9 +1,9 @@
-export default class ArrayLike extends Array {
+export default class Arrayish extends Array {
 	constructor(options, ...args) {
 		super();
 		this.shift();
-		if (ArrayLike.type(options) === 'object' && options.unique === true) {
-			this.toArray(ArrayLike.unique(...arguments));
+		if (Arrayish.type(options) === 'object' && options.unique === true) {
+			this.toArray(Arrayish.unique(...arguments));
 			this.shift();
 		} else {
 			// if passed iterable arraylike, needs to iterate through
@@ -49,7 +49,7 @@ export default class ArrayLike extends Array {
 		var i = 0,
 			out = new Array(len),
 			returnArr =
-				ArrayLike.hasOption(options, 'returnArr') &&
+				Arrayish.hasOption(options, 'returnArr') &&
 				options.returnArr === true;
 
 		for (; i < len; ) {
@@ -57,7 +57,7 @@ export default class ArrayLike extends Array {
 			i++;
 		}
 
-		return returnArr ? out : new ArrayLike(out);
+		return returnArr ? out : new Arrayish(out);
 	}
 
 	forEach(fn) {
@@ -119,7 +119,7 @@ export default class ArrayLike extends Array {
 			out.push(arr[i]);
 			i++;
 		}
-		return returnArr ? out : new ArrayLike(out);
+		return returnArr ? out : new Arrayish(out);
 	}
 
 	static type(obj) {
