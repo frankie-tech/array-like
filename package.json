@@ -1,17 +1,17 @@
 {
 	"name": "arrayish",
 	"version": "0.1.0",
-	"description": "A subclass for Arrays",
+	"description": "An arrayish package that extends the array prototype",
 	"main": "dist/arrayish.js",
 	"module": "dist/arrayish.modern.js",
-	"source": "src/index.js",
+	"source": "src/index.ts",
 	"scripts": {
 		"test": "uvu -r esm tests",
 		"bundle:prod": "microbundle -f modern,umd",
 		"bundle:dev": "microbundle watch --compress=false -f modern,umd --raw=true --no-sourcemap",
 		"clean:dist": "rm -rf dist",
 		"start": "npm-run-all clean:dist bundle:dev",
-		"build": "npm-run-all test clean:dist bundle:prod"
+		"build": "npm-run-all clean:dist bundle:prod test"
 	},
 	"keywords": [
 		"subclass",
