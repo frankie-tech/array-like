@@ -55,7 +55,7 @@ test('forEach', () => {
 test('asyncEach', async () => {
 	const arrayLike = new Arrayish({ unique: false }, 1, 2, 3, 4);
 
-	const wait = () => new Promise(res => setTimeout(res, 500));
+	const wait = () => new Promise(res => setTimeout(res, 100));
 
 	await arrayLike.asyncEach(async function (item, i, arr) {
 		await wait();
