@@ -1,13 +1,16 @@
 import { ReduceCallback, ReduceValue } from './types';
 
-export default class Arrayish<T> extends Array {
+export default class Arrayish extends Array {
 	length: number;
-	constructor(options: { unique: boolean }, ...items: any[]) {
+	constructor(
+		options: { unique: boolean; returnArr: boolean },
+		...items: any[]
+	) {
 		super();
 		this.shift();
-		this.options = Arrayish.makeDescriptor(options);
+		this.options = Arrayish.makeDescriptors(options);
 		if (options.unique) {
-			let unique = Arrayish.unique({ returnArr: true }, ...items);
+			let unique = Arrayish.unique(options, ...items);
 			this.push(...unique);
 		} else {
 			// if passed iterable arraylike, needs to iterate through
@@ -43,7 +46,7 @@ export default class Arrayish<T> extends Array {
 	}
 
 	// extended from @arr/map by lukeed
-	map(fn: Function, options: { returnArr: boolean }): any[] | Arrayish<any> {
+	map(fn: Function, options: { returnArr: boolean }): any[] | Arrayish {
 		var len = this.length;
 		if (len === 0) {
 			return [];
@@ -60,7 +63,9 @@ export default class Arrayish<T> extends Array {
 			i++;
 		}
 
-		return returnArr ? out : new Arrayish({ unique: false }, out);
+		return returnArr
+			? out
+			: new Arrayish({ unique: false, returnArr: false }, out);
 	}
 
 	forEach(fn: Function) {
@@ -81,17 +86,13 @@ export default class Arrayish<T> extends Array {
 		}
 	}
 
-	isIterable(iterable: any): boolean {
-		return iterable && iterable[Symbol.iterator] instanceof Function;
-	}
-
-	toArray(iterable: any): Arrayish<any> {
+	toArray(iterable: any): Arrayish {
 		var iterArr = Array.prototype.slice.call(iterable),
 			l = iterArr.length,
 			i = 0;
 		for (; l > i; i++) {
 			let item = iterArr[i];
-			this.isIterable(item) ? this.push(...item) : this.push(item);
+			Arrayish.isIterable(item) ? this.push(...item) : this.push(item);
 		}
 		return this;
 	}
@@ -99,7 +100,7 @@ export default class Arrayish<T> extends Array {
 	static unique(
 		options: { returnArr: boolean },
 		...items: any[]
-	): any[] | Arrayish<any> {
+	): any[] | Arrayish {
 		var arr = Array.prototype.slice.call(items),
 			l = arr.length,
 			i = 0,
@@ -113,23 +114,27 @@ export default class Arrayish<T> extends Array {
 			out.push(arr[i]);
 			i++;
 		}
+
 		return options.returnArr
 			? out
-			: new Arrayish({ unique: false }, ...out);
+			: new Arrayish({ unique: false, returnArr: false }, ...out);
 	}
 
 	static type(obj: any): string {
-		// returns type: array, object, symbol, string, etc...
+		// returns type as a string: array, object, symbol, string, etc...
 		return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
 	}
 
-	set options(option) {
-		const [k, v] = Object.entries(option);
+	set options(options: PropertyDescriptor[]) {
+		const [k, v] = options.map(option => Object.entries(option));
+
 		const config = Object.assign(
 			{},
 			Object.getOwnPropertyDescriptor(this, 'config'),
 			{
-				[`${k}`]: v,
+				value: {
+					[`${k}`]: v,
+				},
 			}
 		);
 		Object.defineProperties(this, {
@@ -137,9 +142,16 @@ export default class Arrayish<T> extends Array {
 		});
 	}
 
+	/* 
+	 TODO: I want to make the options accessible at some point, but for now, I'm not sure how to do that keep typescript happy
 	get options() {
-		return Object.getOwnPropertyDescriptor(this, 'config');
+		const descriptors = Object.getOwnPropertyDescriptors(this);
+
+		return {
+			...descriptors
+		};
 	}
+	*/
 
 	get last() {
 		return this[this.length - 1];
@@ -149,18 +161,27 @@ export default class Arrayish<T> extends Array {
 		return Array;
 	}
 
-	static makeDescriptor(options: { unique: boolean }) {
-		return Object.assign(
-			{
-				configurable: true,
-				enumerable: true,
-				writable: true,
-			},
-			options
+	static makeDescriptors(options: { unique: boolean; returnArr: boolean }) {
+		const descriptorDefault = {
+			configurable: true,
+			enumerable: true,
+			writable: true,
+		};
+		const descriptors = Object.entries(options).map(([k, v]) =>
+			Object.assign(descriptorDefault, {
+				value: {
+					[`${k}`]: v,
+				},
+			})
 		);
+		return descriptors;
 	}
 
-	static hasOption(obj, option) {
+	static isIterable(iterable: any): boolean {
+		return iterable && iterable[Symbol.iterator] instanceof Function;
+	}
+
+	static hasOption(obj: {}, option: string) {
 		return this.type(obj) === 'object' && option in obj;
 	}
 }
