@@ -1,6 +1,6 @@
 import { test } from 'uvu';
 import assert from 'uvu/assert';
-import Arrayish from '../dist/array-ish.modern';
+import Arrayish from '../dist/arrayish.modern';
 
 test('type', () => {
 	const array = Arrayish.type([]);
@@ -29,7 +29,7 @@ test('type', () => {
 });
 
 test('unique', () => {
-	const arrayLike = new Arrayish({ unique: true }, 1, 1, 1, 1);
+	const arrayish = new Arrayish({ unique: true }, 1, 1, 1, 1);
 	const test = new Arrayish({ unique: false }, 1);
 	assert.equal(
 		arrayLike,
@@ -48,12 +48,12 @@ test('unique', () => {
 		'Should return a unique array from static method'
 	);
 
-	const uniqueArrayLike = Arrayish.unique({ returnArr: false }, 1, 1, 1, 1);
-	const uniqueArrayLikeTest = new Arrayish({ unique: false }, 1);
+	const uniqueArrayish = Arrayish.unique({ returnArr: false }, 1, 1, 1, 1);
+	const uniqueArrayishTest = new Arrayish({ unique: false }, 1);
 
 	assert.equal(
-		uniqueArrayLike,
-		uniqueArrayLikeTest,
+		uniqueArrayish,
+		uniqueArrayishTest,
 		'Should return a unique Arrayish from static method'
 	);
 });

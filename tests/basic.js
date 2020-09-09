@@ -1,23 +1,23 @@
 import { test } from 'uvu';
 import assert from 'uvu/assert';
-import Arrayish from '../dist/array-ish.modern';
+import Arrayish from '../dist/arrayish.modern';
 
 test('species', () => {
-	const arrayLike = new Arrayish({ unique: false }, 1, 2, 3, 4);
-	assert.type(arrayLike, 'object');
-	assert.instance(arrayLike, Array);
+	const arrayish = new Arrayish({ unique: false }, 1, 2, 3, 4);
+	assert.type(arrayish, 'object');
+	assert.instance(arrayish, Array);
 });
 
 test('value', () => {
-	const arrayLike = new Arrayish({ unique: false }, 1, 2, 3, 4);
-	assert.is(arrayLike, arrayLike);
-	assert.is.not(arrayLike, [1, 2, 3, 4]);
+	const arrayish = new Arrayish({ unique: false }, 1, 2, 3, 4);
+	assert.is(arrayish, arrayish);
+	assert.is.not(arrayish, [1, 2, 3, 4]);
 });
 
 test('length', () => {
-	const arrayLike = new Arrayish({ unique: false }, 1, 2, 3, 4);
-	assert.equal(arrayLike.length, [1, 2, 3, 4].length);
-	assert.equal(arrayLike.last, 4);
+	const arrayish = new Arrayish({ unique: false }, 1, 2, 3, 4);
+	assert.equal(arrayish.length, [1, 2, 3, 4].length);
+	assert.equal(arrayish.last, 4);
 });
 
 test.run();
