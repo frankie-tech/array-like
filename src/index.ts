@@ -1,7 +1,6 @@
 import { ReduceCallback, ReduceValue } from './types';
 
 export default class Arrayish extends Array {
-	length: number;
 	constructor(
 		options: { unique: boolean; returnArr: boolean },
 		...items: any[]
@@ -68,22 +67,17 @@ export default class Arrayish extends Array {
 			: new Arrayish({ unique: false, returnArr: false }, out);
 	}
 
-	forEach(fn: Function) {
+	async forEach(fn: Function, isAsync?: boolean) {
 		var i = 0,
 			len = this.length;
-		for (; i < len; ) {
+		for (; i < len; i++) {
+			if (isAsync) {
+				await fn(this[i], i, this);
+				continue;
+			}
 			fn(this[i], i, this);
-			i++;
 		}
-	}
-
-	async asyncEach(fn: Function) {
-		var i = 0,
-			len = this.length;
-		for (; i < len; ) {
-			await fn(this[i], i, this);
-			i++;
-		}
+		return Promise.resolve();
 	}
 
 	toArray(iterable: any): Arrayish {
