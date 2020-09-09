@@ -32,7 +32,7 @@ test('unique', () => {
 	const arrayish = new Arrayish({ unique: true }, 1, 1, 1, 1);
 	const test = new Arrayish({ unique: false }, 1);
 	assert.equal(
-		arrayLike,
+		arrayish,
 		test,
 		'Should return a unique Arrayish from constructor'
 	);
